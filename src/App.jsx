@@ -1,35 +1,97 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
+import Login from "./components/Login/Login.jsx";
+import Dashboard from "./components/Dashboard/Dashboard.jsx";
+// import Profile from "./components/Profile/Profile.jsx";
+// import Settings from "./components/Settings/Settings.jsx";
+import MainLayout from "./layouts/MainLayout";
+import AuthLayout from "./layouts/AuthLayout";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [userLoggedIn, setUserLoggedIn] = useState(true);
+
+  const routes = [
+    // Rutas públicas con AuthLayout
+    { 
+      path: "/login", 
+      component: <Login setUserLoggedIn={setUserLoggedIn} />, 
+      isPublic: true,
+      layout: AuthLayout 
+    },
+    
+    // Rutas protegidas con MainLayout
+    { 
+      path: "/dashboard", 
+      component: <Dashboard />, 
+      isPublic: false,
+      layout: MainLayout 
+    },
+    // { 
+    //   path: "/profile", 
+    //   component: <Profile />, 
+    //   isPublic: false,
+    //   layout: MainLayout 
+    // },
+    // { 
+    //   path: "/settings", 
+    //   component: <Settings />, 
+    //   isPublic: false,
+    //   layout: MainLayout 
+    // },
+    
+    // Rutas especiales sin layout
+    { 
+      path: "/", 
+      component: <Navigate to="/login" replace />, 
+      isPublic: true 
+    },
+    { 
+      path: "*", 
+      component: <Navigate to="/login" replace />, 
+      isPublic: true 
+    },
+  ];
+
+  const routesElements = routes.map(({ path, component, isPublic, layout: Layout }) => {
+    // Componente con o sin layout
+    const ComponentWithLayout = Layout ? (
+      <Layout setUserLoggedIn={setUserLoggedIn} userLoggedIn={userLoggedIn}>
+        {component}
+      </Layout>
+    ) : component;
+
+    if (isPublic) {
+      return (
+        <Route
+          key={path}
+          path={path}
+          element={
+            userLoggedIn ?
+              <Navigate to="/dashboard" replace /> :
+              ComponentWithLayout
+          }
+        />
+      );
+    } else {
+      return (
+        <Route
+          key={path}
+          path={path}
+          element={
+            userLoggedIn ? ComponentWithLayout : <Navigate to="/login" replace />
+          }
+        />
+      );
+    }
+  });
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      <Routes>
+        {routesElements}
+      </Routes>
+    </div>
+  );
 }
 
-export default App
+export default App;
