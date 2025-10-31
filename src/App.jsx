@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import Login from "./components/Login/Login.jsx";
 import Dashboard from "./components/Dashboard/Dashboard.jsx";
-// import Profile from "./components/Profile/Profile.jsx";
-// import Settings from "./components/Settings/Settings.jsx";
+import Counter from "./components/Counter/Counter.jsx";
+//Layouts
 import MainLayout from "./layouts/MainLayout";
 import AuthLayout from "./layouts/AuthLayout";
 
@@ -26,12 +26,12 @@ function App() {
       isPublic: false,
       layout: MainLayout 
     },
-    // { 
-    //   path: "/profile", 
-    //   component: <Profile />, 
-    //   isPublic: false,
-    //   layout: MainLayout 
-    // },
+    { 
+      path: "/counter", 
+      component: <Counter />, 
+      isPublic: false,
+      layout: MainLayout 
+    },
     // { 
     //   path: "/settings", 
     //   component: <Settings />, 
